@@ -1,6 +1,82 @@
 #include <stdio.h>
+#include<stdlib.h>
 #include <conio.h>
 
+struct Book;
+struct Node;
+struct List;
+
+struct Book {
+    char isbn[10];
+    char title[20];
+    char author[20];
+    char publishingHouse[20];
+    int  publishingYear;
+    bool state;
+};
+
+struct Node {
+    Book book;
+    Node *pNext;
+};
+
+struct List {
+    Node *pHead;
+    Node *pTail;
+};
+
+Book createBook() {
+    char s;
+    Book book;
+    printf("Enter the book's ISBN': ");
+    scanf("%s", &book.isbn);
+    fflush(stdin);
+    printf("Enter the book's title: ");
+    scanf("%s", &book.title);
+    fflush(stdin);
+    printf("Enter the book's author: ");
+    scanf("%s", &book.author);
+    fflush(stdin);
+    printf("Enter the book's Publishing House: ");
+    scanf("%s", &book.publishingHouse);
+    fflush(stdin);
+    printf("Enter the book's Publishing Year: ");
+    scanf("%d", &book.publishingYear);
+    fflush(stdin);
+    printf("Has the book been borrowed?(Y/N): ");
+    scanf("%c", &s);
+    fflush(stdin);
+    
+	if(s == 'Y' || s == 'y') 
+		book.state = true;
+    else 
+		book.state = false;
+    
+	return book;
+}
+
+Node *createNode() {
+    Node *temp = (Node*)malloc(sizeof(Node));
+    temp->book = createBook();
+    temp->pNext = NULL;
+    return temp;
+}
+
+void createNullList(List &list)
+{
+	list.pHead = NULL;
+	list.pTail = NULL;
+}
+
+void insertFist(List &list) {
+    Node *temp = createNode();
+    if(list.pHead == NULL) {
+        list.pHead = list.pTail = temp;
+    } else {
+        temp->pNext = list.pHead;
+        list.pHead = temp;
+    }
+}
 
 //adding feature ===============================================
 void displayInsertMenu() {
@@ -10,7 +86,7 @@ void displayInsertMenu() {
     printf("0. Exit\n");
 }
 
-void insertBook() {
+void insertBook(List &list) {
     int selection;
     bool isRunning = true;
 
@@ -26,8 +102,9 @@ void insertBook() {
                 break;
             
             case 1: //Insert a new book at the top of the list
-                printf("Insert a new book at the top of the list\n");
-                break;
+                //printf("Insert a new book at the top of the list\n");
+                insertFist(list);
+				break;
 
             case 2: //Insert a new book at after the orther
                 printf("Insert a book at after the orther\n");
@@ -54,7 +131,7 @@ void displayDeletingMenu() {
     printf("0. Exit\n");
 }
 
-void deleteBook() {
+void deleteBook(List &list) {
     int selection;
     bool isRunning = true;
 
@@ -107,7 +184,7 @@ void displaySearchingMenu() {
     printf("0. Exit\n");
 }
 
-void searchBook() {
+void searchBook(List &list) {
     int selection;
     bool isRunning = true;
 
@@ -148,7 +225,24 @@ void displayBooksMenu() {
     printf("0. Exit\n");
 }
 
-void displayBooks() {
+void print(Book &book) {
+	printf("ISBN: %s\n", book.isbn);
+	printf("Title: %s\n", book.title);
+	printf("Author: %s\n", book.author);
+	printf("Publishing House: %s\n", book.publishingHouse);
+	printf("Publishing Year: %s\n", book.publishingYear);
+	printf("State: %s\n", book.state);
+}
+
+void display(List &list) {
+	Node* current = list.pHead;
+	while(current != NULL) {
+		print(current->book);
+		current = current->pNext;
+	};
+}
+
+void displayBooks(List &list) {
     int selection;
     bool isRunning = true;
 
@@ -164,7 +258,7 @@ void displayBooks() {
                 break;
             
             case 1: //Display all books by category
-                printf("Display all books by category\n");
+				display(list);
                 break;
 
             case 2: //Display state of the book
@@ -181,11 +275,6 @@ void displayBooks() {
     }
 }
 
-
-
-
-
-
 //main ===========================================
 void displayMenu() {
     printf("1. Create\n");
@@ -201,7 +290,7 @@ void displaySubMenu() {
     printf("0. Exit\n");
 }
 
-void options() {
+void options(List &list) {
     int selection;
     bool isRunning = true;
 
@@ -218,22 +307,22 @@ void options() {
             
             case 1: //add a book
                 printf("Add a book\n");
-                insertBook();
+                insertBook(list);
                 break;
 
             case 2: //delete book
                 printf("Delete book\n");
-                deleteBook();
+                deleteBook(list);
                 break;
 
             case 3: //search book
                 printf("Search book\n");
-                searchBook();
+                searchBook(list);
                 break;
 
             case 4: //display book
                 printf("Display book\n");
-                displayBooks();
+                displayBooks(list);
                 break;
 
             default:
@@ -243,6 +332,7 @@ void options() {
 }
 
 int main() {
+	List list;
     int selection;
     bool isRunning = true;
     
@@ -258,7 +348,8 @@ int main() {
                 break;
             
             case 1://create
-                options();
+            	createNullList(list);
+                options(list);
                 break;
 
             case 2://open file

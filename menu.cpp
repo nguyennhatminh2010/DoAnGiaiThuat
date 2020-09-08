@@ -4,7 +4,7 @@ struct Book;
 struct Node;
 struct List;
 struct Book{
-    char id[10];
+    char id[5];
     char name[20];
     char author[20];
     char publishingHouse[20];
@@ -66,10 +66,34 @@ void insertFist(List &l){
         l.pHead = temp;
     }
 }
-    
-    
-    Book insertAfter();
-    Book insertLast();
+void insertLast(List &l){
+    Node *temp = createNode();
+    if(l.pHead == NULL)
+    {
+        l.pHead = l.pTail = temp;
+    }
+    else{
+        l.pTail->pNext = temp;
+        l.pTail = temp;
+    }
+}
+// void insertAfter(List &l)
+// {
+//     char id[5];
+//     Node *temp = createNode();
+//     printf("\nYou need insert it after book id: ");
+//     scanf("%s",&id);
+//     fflush(stdin);
+//     for(Node *k = l.pHead; k != NULL; k = k->pNext)
+//     {
+//         if(k->book.id == id)
+//         {
+//             // temp->pNext = k->pNext;
+//             // k->pNext = temp;
+//             printf("hello");
+//         }
+//     }
+// }
     Book removeByCode();
     Book removeByName();
     Book removeByAuthor();
@@ -87,6 +111,10 @@ void insertFist(List &l){
     void input();
 int main()
 {
-    
+    List l;
+    createNullList(l);
+    for(int i = 0; i < 3; i++){
+        insertLast(l);
+    }
     return 0;
 }

@@ -1,12 +1,13 @@
 #include <stdio.h>
-#include<stdlib.h>
+#include <stdlib.h>
 #include <conio.h>
+#include <string.h>
 
-struct Book;
-struct Node;
-struct List;
+// struct Book;
+// struct Node;
+// struct List;
 
-struct Book {
+struct book {
     char isbn[10];
     char title[20];
     char author[20];
@@ -14,16 +15,19 @@ struct Book {
     int  publishingYear;
     bool state;
 };
+typedef struct book Book;
 
-struct Node {
+struct node {
     Book book;
     Node *pNext;
 };
+typedef struct node Node;
 
-struct List {
+struct list {
     Node *pHead;
     Node *pTail;
 };
+typedef struct list List;
 
 Book createBook() {
     char s;
@@ -68,6 +72,16 @@ void createNullList(List &list)
 	list.pTail = NULL;
 }
 
+
+//==================================Chỗ này của thằng Minh=======================================
+//adding feature ===============================================
+void displayInsertMenu() {
+    printf("1. Insert a new book at the top of the list\n");
+    printf("2. Insert a new book at after the orther\n");
+    printf("3. Insert a new book at the end of the list\n");
+    printf("0. Exit\n");
+}
+
 void insertFist(List &list) {
     Node *temp = createNode();
     if(list.pHead == NULL) {
@@ -76,14 +90,6 @@ void insertFist(List &list) {
         temp->pNext = list.pHead;
         list.pHead = temp;
     }
-}
-
-//adding feature ===============================================
-void displayInsertMenu() {
-    printf("1. Insert a new book at the top of the list\n");
-    printf("2. Insert a new book at after the orther\n");
-    printf("3. Insert a new book at the end of the list\n");
-    printf("0. Exit\n");
 }
 
 void insertBook(List &list) {
@@ -176,12 +182,29 @@ void deleteBook(List &list) {
     }
 }
 
-//searching feature=========================================
+
+//==================================Chỗ này của thằng Bảo=======================================
+//searching feature============================================
 void displaySearchingMenu() {
     printf("1. Search all books of the list by book's title\n");
     printf("2. Search all books of the list by author\n");
     printf("3. Search all books of the list by publisher's name\n");
     printf("0. Exit\n");
+}
+
+
+void filterTitleBook(List list, char title[]) {
+    List oList;
+    Node* current = list.pHead;
+    while (current != NULL)
+    {
+        if(strcmp(current->book.title, title) == 0) {
+            insertFist()
+        }
+
+        current = current->pNext;
+    }
+    
 }
 
 void searchBook(List &list) {
@@ -230,8 +253,8 @@ void print(Book &book) {
 	printf("Title: %s\n", book.title);
 	printf("Author: %s\n", book.author);
 	printf("Publishing House: %s\n", book.publishingHouse);
-	printf("Publishing Year: %s\n", book.publishingYear);
-	printf("State: %s\n", book.state);
+	printf("Publishing Year: %d\n", book.publishingYear);
+	printf("State: %b\n", book.state);
 }
 
 void display(List &list) {
@@ -258,11 +281,11 @@ void displayBooks(List &list) {
                 break;
             
             case 1: //Display all books by category
-				display(list);
+				display(list);//tạm thời hiển thị tất cả, update sau
                 break;
 
             case 2: //Display state of the book
-                printf("Delete a book by book's title\n");
+                
                 break;
 
             case 3: //Delete all book by author
@@ -275,6 +298,8 @@ void displayBooks(List &list) {
     }
 }
 
+
+//==================================Chỗ này hỏi nhau trước khi sửa=======================================
 //main ===========================================
 void displayMenu() {
     printf("1. Create\n");

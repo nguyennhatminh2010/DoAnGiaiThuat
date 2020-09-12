@@ -13,7 +13,7 @@ struct book {
     char author[20];
     char publishingHouse[20];
     int  publishingYear;
-    bool state;
+    int state;//chỗ này sửa thành kiểu int vì trong c k có kiểu boolen
 };
 typedef struct book Book;
 
@@ -28,6 +28,27 @@ struct list {
     Node *pTail;
 };
 typedef struct list List;
+
+void display(List &list);
+void displayInsertMenu();
+void displayDeletingMenu();
+void displaySearchingMenu();
+void displayBooks(List &list);
+void displayMenu();
+void displaySubMenu();
+void displayBooksMenu();
+Book createBook();
+Node *createNode();
+void createNullList(List &list);
+void insertFist(List &list);
+void insertBook(List &list);
+void deleteBook(List &list);
+List filterTitleBook(List list, char title[]);
+void searchBook(List &list);
+void print(Book &book);
+List completedBooks(List &list);
+List inCompleteBooks(List &list);
+void options(List &list);
 
 Book createBook() {
     char s;
@@ -52,9 +73,9 @@ Book createBook() {
     fflush(stdin);
     
 	if(s == 'Y' || s == 'y') 
-		book.state = true;
+		book.state = 1;
     else 
-		book.state = false;
+		book.state = 0;
     
 	return book;
 }
@@ -94,7 +115,7 @@ void insertFist(List &list) {
 
 void insertBook(List &list) {
     int selection;
-    bool isRunning = true;
+    int isRunning = 1;
 
     while (isRunning) {
 
@@ -104,7 +125,7 @@ void insertBook(List &list) {
         switch (selection) {
 
             case 0: //back
-                isRunning = false;
+                isRunning = 0;
                 break;
             
             case 1: //Insert a new book at the top of the list
@@ -139,7 +160,7 @@ void displayDeletingMenu() {
 
 void deleteBook(List &list) {
     int selection;
-    bool isRunning = true;
+    int isRunning = 1;
 
     while (isRunning) {
 
@@ -149,7 +170,7 @@ void deleteBook(List &list) {
         switch (selection) {
 
             case 0: //back
-                isRunning = false;
+                isRunning = 0;
                 break;
             
             case 1: //Delete a book by id
@@ -193,23 +214,22 @@ void displaySearchingMenu() {
 }
 
 
-void filterTitleBook(List list, char title[]) {
+List filterTitleBook(List list, char title[]) {
     List oList;
     Node* current = list.pHead;
     while (current != NULL)
     {
         if(strcmp(current->book.title, title) == 0) {
-            insertFist()
+            //insertLast(oList, current);
         }
-
         current = current->pNext;
     }
-    
+    return oList;
 }
 
 void searchBook(List &list) {
     int selection;
-    bool isRunning = true;
+    int isRunning = 1;
 
     while (isRunning) {
 
@@ -219,7 +239,7 @@ void searchBook(List &list) {
         switch (selection) {
 
             case 0: //back
-                isRunning = false;
+                isRunning = 0;
                 break;
             
             case 1: //Search all books of the list by book's title
@@ -265,9 +285,35 @@ void display(List &list) {
 	};
 }
 
+List completedBooks(List &list) {
+    List oList;
+    Node* current = list.pHead;
+    createNullList(oList);
+    while (current != NULL) {
+        if(current->book.state) {
+            // insertLast(oList, current->book);
+        }
+        current = current->pNext;
+    }
+    return oList;
+}
+
+List inCompleteBooks(List &list) {
+    List oList;
+    Node* current = list.pHead;
+    createNullList(oList);
+    while (current != NULL) {
+        if(!current->book.state) {
+            // insertLast(oList, current->book);
+        }
+        current = current->pNext;   
+    }
+    return oList;
+}
+
 void displayBooks(List &list) {
     int selection;
-    bool isRunning = true;
+    int isRunning = 1;
 
     while (isRunning) {
 
@@ -277,7 +323,7 @@ void displayBooks(List &list) {
         switch (selection) {
 
             case 0: //back
-                isRunning = false;
+                isRunning = 0;
                 break;
             
             case 1: //Display all books by category
@@ -285,10 +331,30 @@ void displayBooks(List &list) {
                 break;
 
             case 2: //Display state of the book
+                int subSelection;
+                printf("1. Completed\n");
+                printf("2. Incomplete\n");
+                scanf("%d", &subSelection);
+                switch (subSelection) {
                 
+                case 1: //sach da tra
+                    List oList;
+                    oList = completedBooks(list);
+                    display(oList);
+                    break;
+                
+                case 2://sach chua tra
+                    List oList;
+                    oList = inCompleteBooks(list);
+                    display(oList);
+                    break;
+                
+                default:
+                    break;
+                }
                 break;
 
-            case 3: //Delete all book by author
+            case 3: //Delete all books in order
                 printf("Display all books in order\n");
                 break;
 
@@ -317,7 +383,7 @@ void displaySubMenu() {
 
 void options(List &list) {
     int selection;
-    bool isRunning = true;
+    int isRunning = 1;
 
     while (isRunning) {
 
@@ -327,7 +393,7 @@ void options(List &list) {
         switch (selection) {
 
             case 0: //back
-                isRunning = false;
+                isRunning = 0;
                 break;
             
             case 1: //add a book
@@ -359,7 +425,7 @@ void options(List &list) {
 int main() {
 	List list;
     int selection;
-    bool isRunning = true;
+    int isRunning = 1;
     
     while (isRunning) {
         
@@ -369,7 +435,7 @@ int main() {
         switch (selection) {
 
             case 0:
-                isRunning = false;
+                isRunning = 0;
                 break;
             
             case 1://create

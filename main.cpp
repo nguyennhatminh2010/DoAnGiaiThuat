@@ -189,6 +189,7 @@ void removeBookByTitle(List &l)
 {
 	char title[20];
     printf("\nPlease enter the book's title need to remove: ");
+    fflush(stdin);
     gets(title);
     fflush(stdin);
     if(l.pHead == NULL) return;
@@ -210,7 +211,8 @@ void removeBookByAuthor(List &l)
 {
 	char author[20];
     printf("\nPlease enter the book's author need to remove: ");
-    scanf("%s",&author);
+    fflush(stdin);
+    gets(author);
     fflush(stdin);
     if(l.pHead == NULL) return;
     if(strcmp(l.pHead->book.author,author)) removeFirst(l);
@@ -312,7 +314,6 @@ void deleteBook(List &list) {
                 printf("Delete a book by book's title\n");
                 removeBookByTitle(list);
                 break;
-
             case 3: //Delete all book by author
                 printf("Delete all book by author\n");
                 removeBookByAuthor(list);
@@ -321,6 +322,7 @@ void deleteBook(List &list) {
             case 4: //Delete a book at the top of the list
                 printf("Delete a book at the top of the list\n");
                 removeFirst(list);
+                system("pause");
                 break;
 
             case 5: //Delete a book after the orther by book's isbn
@@ -331,6 +333,7 @@ void deleteBook(List &list) {
             case 6: //Delete a book at the end of the list
                 printf("Delete a book at the end of the list\n");
                 removeLast(list);
+                system("pause");
                 break;
 
             default:
@@ -529,5 +532,6 @@ int main() {
 		system("cls");
     }
     printf("\nThank for watching!");
+    getch();
     return 0;
 }

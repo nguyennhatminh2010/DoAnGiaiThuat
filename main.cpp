@@ -2,25 +2,53 @@
 #include<stdlib.h>
 #include <conio.h>
 
-struct Book;
-struct Node;
-struct List;
-struct Book{
+struct book {
     char isbn[10];
     char title[20];
     char author[20];
     char publishingHouse[20];
     int  publishingYear;
-    bool state;
+    int state;//chỗ này sửa thành kiểu int vì trong c k có kiểu boolen
 };
-struct Node{
+typedef struct book Book;
+
+struct node {
     Book book;
-    Node *pNext;
+    node *pNext;
 };
-struct List{
+typedef struct node Node;
+
+struct list {
     Node *pHead;
     Node *pTail;
 };
+typedef struct list List;
+
+void display(List &list);
+void displayInsertMenu();
+void displayDeletingMenu();
+void displaySearchingMenu();
+void displayBooks(List &list);
+void displayMenu();
+void displaySubMenu();
+void displayBooksMenu();
+Book createBook();
+Node *createNode();
+void createNullList(List &list);
+void insertFist(List &list);
+void insertBook(List &list);
+void deleteBook(List &list);
+List filterBook(List list, char type[], char keyword[]);
+void searchBook(List &list);
+void print(Book &book);
+List completedBooks(List &list);
+List inCompleteBooks(List &list);
+void options(List &list);
+
+bool strcmp(char s1[], char s2[]);
+int strlen(char s[]);
+
+
 Book createBook() {
     char s;
     Book book;
@@ -44,15 +72,15 @@ Book createBook() {
         scanf("%c", &s);
         fflush(stdin);
         if(s == 'Y' || s == 'y') 
-            book.state = true;
+            book.state = 1;
         else if(s == 'N' || s == 'n')
-            book.state = false;
+            book.state = 0;
     }
 	return book;
 }
 
 Node *createNode(Book book){
-    Node *temp = (Node*)malloc(sizeof(struct Node));
+    Node *temp = (Node*)malloc(sizeof(Node));
     temp->book = book;
     temp->pNext = NULL;
     return temp;
@@ -62,6 +90,9 @@ void createNullList(List &l)
 	l.pHead = NULL;
 	l.pTail = NULL;
 }
+
+//==================================Chỗ này của thằng Minh=======================================
+//adding feature ===============================================
 void insertFist(List &l,Book book){
     Node *temp = createNode(book);
     if(l.pHead == NULL){
@@ -240,7 +271,7 @@ void displayInsertMenu() {
 
 void insertBook(List &list,Book book) {
     int selection;
-    bool isRunning = true;
+    int isRunning = 1;
 
     while (isRunning) {
 
@@ -250,7 +281,7 @@ void insertBook(List &list,Book book) {
         switch (selection) {
 
             case 0: //back
-                isRunning = false;
+                isRunning = 0;
                 break;
             
             case 1: //Insert a new book at the top of the list
@@ -292,7 +323,7 @@ void displayDeletingMenu() {
 
 void deleteBook(List &list) {
     int selection;
-    bool isRunning = true;
+    int isRunning = 1;
 
     while (isRunning) {
 
@@ -302,7 +333,7 @@ void deleteBook(List &list) {
         switch (selection) {
 
             case 0: //back
-                isRunning = false;
+                isRunning = 0;
                 break;
             
             case 1: //Delete a book by id
@@ -343,17 +374,46 @@ void deleteBook(List &list) {
     }
 }
 
-//searching feature=========================================
+//==================================Chỗ này của thằng Bảo=======================================
+//searching feature============================================
 void displaySearchingMenu() {
     printf("1. Search all books of the list by book's title\n");
     printf("2. Search all books of the list by author\n");
     printf("3. Search all books of the list by publisher's name\n");
-    printf("0. Back\n");
+    printf("0. Exit\n");
+}
+
+
+List filterBook(List list, char type[], char keyword[]) {
+    List oList;
+    Node* current = list.pHead;
+    while (current != NULL)
+    {
+        // if(strcmp(type, "title")) {
+        //     if(strcmp(current->book.title, keyword) == 0) {
+        //         //insertLast(oList, current);
+        //     }
+        // } 
+
+        // if (strcmp(type, "author")) {
+        //     if(strcmp(current->book.author, keyword) == 0) {
+        //         //insertLast(oList, current);
+        //     }
+        // }
+
+        // if (strcmp(type, "publisher")) {
+        //     if(strcmp(current->book.publishingHouse, keyword) == 0) {
+        //         //insertLast(oList, current);
+        //     }
+        // }   
+        current = current->pNext;
+    }
+    return oList;
 }
 
 void searchBook(List &list) {
     int selection;
-    bool isRunning = true;
+    int isRunning = 1;
 
     while (isRunning) {
 
@@ -363,7 +423,7 @@ void searchBook(List &list) {
         switch (selection) {
 
             case 0: //back
-                isRunning = false;
+                isRunning = 0;
                 break;
             
             case 1: //Search all books of the list by book's title
@@ -389,7 +449,7 @@ void displayBooksMenu() {
     printf("1. Display all books by category\n");
     printf("2. Display state of the book\n");
     printf("3. Display all books in order\n");
-    printf("0. Back\n");
+    printf("0. Exit\n");
 }
 
 void print(Book &book) {
@@ -397,8 +457,8 @@ void print(Book &book) {
 	printf("Title: %s\n", book.title);
 	printf("Author: %s\n", book.author);
 	printf("Publishing House: %s\n", book.publishingHouse);
-	printf("Publishing Year: %s\n", book.publishingYear);
-	printf("State: %s\n", book.state);
+	printf("Publishing Year: %d\n", book.publishingYear);
+	printf("State: %b\n", book.state);
 }
 
 void display(List &list) {
@@ -409,9 +469,35 @@ void display(List &list) {
 	};
 }
 
+List completedBooks(List &list) {
+    List oList;
+    Node* current = list.pHead;
+    createNullList(oList);
+    while (current != NULL) {
+        if(current->book.state) {
+            // insertLast(oList, current->book);
+        }
+        current = current->pNext;
+    }
+    return oList;
+}
+
+List inCompleteBooks(List &list) {
+    List oList;
+    Node* current = list.pHead;
+    createNullList(oList);
+    while (current != NULL) {
+        if(!current->book.state) {
+            // insertLast(oList, current->book);
+        }
+        current = current->pNext;   
+    }
+    return oList;
+}
+
 void displayBooks(List &list) {
     int selection;
-    bool isRunning = true;
+    int isRunning = 1;
 
     while (isRunning) {
 
@@ -421,29 +507,95 @@ void displayBooks(List &list) {
         switch (selection) {
 
             case 0: //back
-                isRunning = false;
+                isRunning = 0;
                 break;
             
             case 1: //Display all books by category
-				display(list);
+				display(list);//tạm thời hiển thị tất cả, update sau
                 break;
 
             case 2: //Display state of the book
-                printf("Delete a book by book's title\n");
+               
+                int subSelection;
+                printf("1. Completed\n");
+                printf("2. Incomplete\n");
+                scanf("%d", &subSelection);
+                switch (subSelection) {
+                
+                case 1: //sach da tra
+                    {
+                        List oList;
+                        oList = completedBooks(list);
+                        display(oList);
+                        break;
+                    }
+                
+                case 2://sach chua tra
+                    {
+                        List oList;
+                        oList = inCompleteBooks(list);
+                        display(oList);
+                        break;
+                    }
+                
+                default:
+                    break;
+                }
                 break;
 
-            case 3: //Delete all book by author
-                printf("Display all books in order\n");
-                break;
-
+            case 3: //Delete all books in order
+                {
+                    int subSelection;
+                    printf("1. Completed\n");
+                    printf("2. Incomplete\n");
+                    scanf("%d", &subSelection);
+                    switch (subSelection) {
+                    
+                    case 1: //sach da tra
+                        {
+                            List oList;
+                            // oList = alphabetTitle(list);
+                            display(oList);
+                            break;
+                        }
+                    
+                    case 2://sach chua tra
+                        {
+                            List oList;
+                            // oList = alphabetAuthor(list);
+                            display(oList);
+                            break;
+                        }
+                    
+                    case 3: //sach da tra
+                        {
+                            List oList;
+                            // oList = alphabetPublishingHouse(list);
+                            display(oList);
+                            break;
+                        }
+                    
+                    case 4://sach chua tra
+                        {
+                            List oList;
+                            oList = inCompleteBooks(list);
+                            display(oList);
+                            break;  
+                        }
+                    
+                    default:
+                        break;
+                    }
+                    break;
+                }
             default:
                 break;
         }
     }
 }
 
+//==================================Chỗ này hỏi nhau trước khi sửa=======================================
 //main ===========================================
-
 void displaySubMenu() {
     printf("1. Add a new Book\n");
     printf("2. Delete book\n");
@@ -454,7 +606,7 @@ void displaySubMenu() {
 
 void options(List &list,Book book) {
     int selection;
-    bool isRunning = true;
+    int isRunning = 1;
 
     while (isRunning) {
 
@@ -464,7 +616,7 @@ void options(List &list,Book book) {
         switch (selection) {
 
             case 0: //back
-                isRunning = false;
+                isRunning = 0;
                 break;
             
             case 1: //add a book
@@ -504,7 +656,7 @@ int main() {
 	List list;
 	Book book;
     int selection;
-    bool isRunning = true;
+    int isRunning = 1;
     while (isRunning) {
         displayMenu();
         printf("\n-> ");
@@ -512,7 +664,7 @@ int main() {
         switch (selection) {
 
             case 0:
-                isRunning = false;
+                isRunning = 0;
                 break;
             
             case 1://create

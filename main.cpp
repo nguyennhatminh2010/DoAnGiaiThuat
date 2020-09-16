@@ -41,8 +41,7 @@ void deleteBook(List &list);
 List filterBook(List list, char type[], char keyword[]);
 void searchBook(List &list);
 void print(Book &book);
-List completedBooks(List &list);
-List inCompleteBooks(List &list);
+List stateBooks(List &list, int state);
 void options(List &list);
 
 bool strcmp(char s1[], char s2[]);
@@ -389,23 +388,23 @@ List filterBook(List list, char type[], char keyword[]) {
     Node* current = list.pHead;
     while (current != NULL)
     {
-        // if(strcmp(type, "title")) {
-        //     if(strcmp(current->book.title, keyword) == 0) {
-        //         //insertLast(oList, current);
-        //     }
-        // } 
+        if(strcmp(type, "title")) {
+            if(strcmp(current->book.title, keyword) == 0) {
+            	insertLast(oList, current->book);
+            }
+        } 
 
-        // if (strcmp(type, "author")) {
-        //     if(strcmp(current->book.author, keyword) == 0) {
-        //         //insertLast(oList, current);
-        //     }
-        // }
+        if (strcmp(type, "author")) {
+            if(strcmp(current->book.author, keyword) == 0) {
+                insertLast(oList, current->book);
+            }
+        }
 
-        // if (strcmp(type, "publisher")) {
-        //     if(strcmp(current->book.publishingHouse, keyword) == 0) {
-        //         //insertLast(oList, current);
-        //     }
-        // }   
+        if (strcmp(type, "publisher")) {
+            if(strcmp(current->book.publishingHouse, keyword) == 0) {
+                insertLast(oList, current->book);
+            }
+        }   
         current = current->pNext;
     }
     return oList;
@@ -427,16 +426,40 @@ void searchBook(List &list) {
                 break;
             
             case 1: //Search all books of the list by book's title
-                printf("Search all books of the list by book's title\n");
-                break;
+                {
+                    List oList;
+                    createNullList(oList);
+                    char keyword[20];
+                    printf("Enter the book's title: ");
+                    gets(keyword); fflush(stdin);
+                    oList = filterBook(list, "title", keyword);
+                    display(oList);
+                    break;
+                }
 
-            case 2: //Search all books of the list by author
-                printf("Search all books of the list by author\n");
-                break;
+			case 2:
+	            {
+	                List oList;
+                    createNullList(oList);
+	                char keyword[20];
+                    printf("Enter the book's author: ");
+                    gets(keyword); fflush(stdin);
+                    oList = filterBook(list, "author", keyword);
+                    display(oList);
+                    break;
+                }
 
-            case 3: //Search all books of the list by publisher's name
-                printf("Search all books of the list by publisher's name\n");
-                break;
+            case 3:
+                {
+                    List oList;
+                    createNullList(oList);
+                    char keyword[20];
+                    printf("Enter the book's publisher: ");
+                    gets(keyword); fflush(stdin);
+                    oList = filterBook(list, "publisher", keyword);
+                    display(oList);
+                    break;
+                }
 
             default:
                 break;
@@ -458,7 +481,11 @@ void print(Book &book) {
 	printf("Author: %s\n", book.author);
 	printf("Publishing House: %s\n", book.publishingHouse);
 	printf("Publishing Year: %d\n", book.publishingYear);
-	printf("State: %b\n", book.state);
+	if(book.state == 1) {
+		printf("State: Completed\n");
+	} else {
+		printf("State: Incomplete\n");
+	}
 }
 
 void display(List &list) {
@@ -469,29 +496,75 @@ void display(List &list) {
 	};
 }
 
-List completedBooks(List &list) {
+List stateBooks(List &list, int state) {
     List oList;
     Node* current = list.pHead;
     createNullList(oList);
     while (current != NULL) {
-        if(current->book.state) {
-            // insertLast(oList, current->book);
+        if(current->book.state == state) {
+            insertLast(oList, current->book);
         }
         current = current->pNext;
     }
     return oList;
 }
-
-List inCompleteBooks(List &list) {
-    List oList;
+void copyList(List &oList, List &list) {
+    if(list.pHead == NULL) {
+        return;
+    } 
     Node* current = list.pHead;
-    createNullList(oList);
-    while (current != NULL) {
-        if(!current->book.state) {
-            // insertLast(oList, current->book);
-        }
-        current = current->pNext;   
+
+    while (current != NULL)
+    {
+        insertLast(oList, current->book);
     }
+    
+}
+
+void swap(Node *a, Node *b) 
+{ 
+    Book temp = a->book; 
+    a->book = b->book; 
+    b->book = temp; 
+} 
+
+List sortList(List &list, char keyword[]) {
+    List oList;
+    createNullList(oList);
+    copyList(oList, list);
+    Node* currentOutside = list.pHead;
+    Node* currentInside;
+
+    if (list.pHead == NULL) 
+        return list; 
+    
+    while (currentOutside->pNext != NULL)
+    {
+        currentInside = currentOutside->pNext;
+        while (currentInside != NULL)
+        {
+            if(strcmp(keyword, "title")) {
+                if(currentOutside->book.title[0] > currentInside->book.title[0] ) {
+                    swap(currentOutside, currentInside);
+                }
+            }
+
+            if(strcmp(keyword, "author")) {
+                if(currentOutside->book.author[0] > currentInside->book.author[0] ) {
+                    swap(currentOutside, currentInside);
+                }
+            }
+
+            if(strcmp(keyword, "publisher")) {
+                if(currentOutside->book.publishingHouse[0] > currentInside->book.publishingHouse[0] ) {
+                    swap(currentOutside, currentInside);
+                }
+            }
+            currentInside = currentInside->pNext;
+        }
+        currentOutside = currentOutside->pNext;
+    }
+    
     return oList;
 }
 
@@ -515,35 +588,6 @@ void displayBooks(List &list) {
                 break;
 
             case 2: //Display state of the book
-               
-                int subSelection;
-                printf("1. Completed\n");
-                printf("2. Incomplete\n");
-                scanf("%d", &subSelection);
-                switch (subSelection) {
-                
-                case 1: //sach da tra
-                    {
-                        List oList;
-                        oList = completedBooks(list);
-                        display(oList);
-                        break;
-                    }
-                
-                case 2://sach chua tra
-                    {
-                        List oList;
-                        oList = inCompleteBooks(list);
-                        display(oList);
-                        break;
-                    }
-                
-                default:
-                    break;
-                }
-                break;
-
-            case 3: //Delete all books in order
                 {
                     int subSelection;
                     printf("1. Completed\n");
@@ -551,40 +595,65 @@ void displayBooks(List &list) {
                     scanf("%d", &subSelection);
                     switch (subSelection) {
                     
-                    case 1: //sach da tra
-                        {
-                            List oList;
-                            // oList = alphabetTitle(list);
-                            display(oList);
+                        case 1: //sach da tra
+                            {
+                                List oList;
+                                oList = stateBooks(list, 1);
+                                display(oList);
+                                break;
+                            }
+                        
+                        case 2://sach chua tra
+                            {
+                                List oList;
+                                oList = stateBooks(list, 0);
+                                display(oList);
+                                break;
+                            }
+                        
+                        default:
                             break;
-                        }
+                    }
+                    break;
+                }
+
+            case 3: //Display all books in order
+                {
+                    int subSelection;
+                    printf("1. Alpha Title\n");
+                    printf("2. Incomplete\n");
+                    scanf("%d", &subSelection);
+                    switch (subSelection) {
                     
-                    case 2://sach chua tra
-                        {
-                            List oList;
-                            // oList = alphabetAuthor(list);
-                            display(oList);
+                        case 1: 
+                            {
+                                List oList;
+                                createNullList(oList);
+                                oList = sortList(list, "title");
+                                display(oList);
+                                break;
+                            }
+                        
+                        case 2:
+                            {
+                                List oList;
+                                createNullList(oList);
+                                oList = sortList(list, "author");
+                                display(oList);
+                                break;
+                            }
+                        
+                        case 3:
+                            {
+                                List oList;
+                                createNullList(oList);
+                                oList = sortList(list, "publisher");
+                                display(oList);
+                                break;
+                            }
+                        
+                        default:
                             break;
-                        }
-                    
-                    case 3: //sach da tra
-                        {
-                            List oList;
-                            // oList = alphabetPublishingHouse(list);
-                            display(oList);
-                            break;
-                        }
-                    
-                    case 4://sach chua tra
-                        {
-                            List oList;
-                            oList = inCompleteBooks(list);
-                            display(oList);
-                            break;  
-                        }
-                    
-                    default:
-                        break;
                     }
                     break;
                 }

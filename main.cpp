@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include<stdlib.h>
+#include <stdlib.h>
 #include <conio.h>
+
 
 struct book {
     char isbn[10];
@@ -406,7 +407,7 @@ List filterBook(List list, char type[], char keyword[]) {
             }
         }   
         current = current->pNext;
-    }
+    }	
     return oList;
 }
 
@@ -476,24 +477,28 @@ void displayBooksMenu() {
 }
 
 void print(Book &book) {
-	printf("ISBN: %s\n", book.isbn);
-	printf("Title: %s\n", book.title);
-	printf("Author: %s\n", book.author);
-	printf("Publishing House: %s\n", book.publishingHouse);
-	printf("Publishing Year: %d\n", book.publishingYear);
+	printf("%13s", book.isbn);
+	printf("%23s", book.title);
+	printf("%23s", book.author);
+	printf("%23s", book.publishingHouse);
+	printf("%23d", book.publishingYear);
 	if(book.state == 1) {
-		printf("State: Completed\n");
+		printf("      Completed\n");
 	} else {
-		printf("State: Incomplete\n");
+		printf("     Incomplete\n");
 	}
 }
 
 void display(List &list) {
 	Node* current = list.pHead;
+	char heading[200] = "         ISBN                  Title                 Author       Publishing House        Publishing Year          State \n";
+	printf("%s", heading);
+	printf("========================================================================================================================\n");
 	while(current != NULL) {
 		print(current->book);
 		current = current->pNext;
 	};
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
 }
 
 List stateBooks(List &list, int state) {
@@ -560,6 +565,12 @@ List sortList(List &list, char keyword[]) {
                     swap(currentOutside, currentInside);
                 }
             }
+
+            if(strcmp(keyword, "nearly")) {
+                if(currentOutside->book.publishingYear < currentInside->book.publishingYear ) {
+                    swap(currentOutside, currentInside);
+                }
+            }
             currentInside = currentInside->pNext;
         }
         currentOutside = currentOutside->pNext;
@@ -620,9 +631,11 @@ void displayBooks(List &list) {
             case 3: //Display all books in order
                 {
                     int subSelection;
-                    printf("1. Alpha Title\n");
-                    printf("2. Incomplete\n");
-                    scanf("%d", &subSelection);
+                    printf("1. View by alpha Title\n");
+                    printf("2. View by alpha Author\n");
+                    printf("3. View by alpha Publisher\n");
+                    printf("4. View by nearly Books\n");
+					scanf("%d", &subSelection);
                     switch (subSelection) {
                     
                         case 1: 
@@ -651,12 +664,22 @@ void displayBooks(List &list) {
                                 display(oList);
                                 break;
                             }
+                            
+                        case 4:
+                            {
+                                List oList;
+                                createNullList(oList);
+                                oList = sortList(list, "nearly");
+                                display(oList);
+                                break;
+                            }
                         
                         default:
                             break;
                     }
                     break;
                 }
+                
             default:
                 break;
         }
@@ -753,6 +776,6 @@ int main() {
 		system("cls");
     }
     printf("\nThank for watching!");
-    getch();
+    // getch();
     return 0;
 }

@@ -39,11 +39,13 @@ void createNullList(List &list);
 void insertFist(List &list);
 void insertBook(List &list);
 void deleteBook(List &list);
-List filterBook(List list, char type[], char keyword[]);
+List filterBook(List &list, char type[], char keyword[]);
 void searchBook(List &list);
 void print(Book &book);
 List stateBooks(List &list, int state);
 void options(List &list);
+void writeFile(FILE* fout);
+void readFile(FILE* fin);
 
 bool strcmp(char s1[], char s2[]);
 int strlen(char s[]);
@@ -384,25 +386,27 @@ void displaySearchingMenu() {
 }
 
 
-List filterBook(List list, char type[], char keyword[]) {
+List filterBook(List &list, char type[], char keyword[]) {
     List oList;
+    createNullList(oList);
     Node* current = list.pHead;
     while (current != NULL)
     {
         if(strcmp(type, "title")) {
-            if(strcmp(current->book.title, keyword) == 0) {
+            if(strcmp(current->book.title, keyword)) {
+            	printf("%s\n", keyword);
             	insertLast(oList, current->book);
             }
         } 
 
         if (strcmp(type, "author")) {
-            if(strcmp(current->book.author, keyword) == 0) {
+            if(strcmp(current->book.author, keyword)) {
                 insertLast(oList, current->book);
             }
         }
 
         if (strcmp(type, "publisher")) {
-            if(strcmp(current->book.publishingHouse, keyword) == 0) {
+            if(strcmp(current->book.publishingHouse, keyword)) {
                 insertLast(oList, current->book);
             }
         }   
@@ -431,9 +435,11 @@ void searchBook(List &list) {
                     List oList;
                     createNullList(oList);
                     char keyword[20];
+                    char title[10] = "title";
                     printf("Enter the book's title: ");
-                    gets(keyword); fflush(stdin);
-                    oList = filterBook(list, "title", keyword);
+                    fflush(stdin);
+					gets(keyword); 
+                    oList = filterBook(list, title, keyword);
                     display(oList);
                     break;
                 }
@@ -443,9 +449,11 @@ void searchBook(List &list) {
 	                List oList;
                     createNullList(oList);
 	                char keyword[20];
+	                char author[10] = "author";
                     printf("Enter the book's author: ");
-                    gets(keyword); fflush(stdin);
-                    oList = filterBook(list, "author", keyword);
+                    fflush(stdin);
+					gets(keyword); 
+                    oList = filterBook(list, author, keyword);
                     display(oList);
                     break;
                 }
@@ -455,9 +463,11 @@ void searchBook(List &list) {
                     List oList;
                     createNullList(oList);
                     char keyword[20];
+                    char publisher[10] = "publisher";
                     printf("Enter the book's publisher: ");
-                    gets(keyword); fflush(stdin);
-                    oList = filterBook(list, "publisher", keyword);
+                    fflush(stdin);
+					gets(keyword); 
+                    oList = filterBook(list, publisher, keyword);
                     display(oList);
                     break;
                 }
@@ -522,6 +532,7 @@ void copyList(List &oList, List &list) {
     while (current != NULL)
     {
         insertLast(oList, current->book);
+        current = current->pNext;
     }
     
 }
@@ -534,14 +545,14 @@ void swap(Node *a, Node *b)
 } 
 
 List sortList(List &list, char keyword[]) {
-    List oList;
+    if (list.pHead == NULL) 
+        return list;
+    
+	List oList;
     createNullList(oList);
     copyList(oList, list);
-    Node* currentOutside = list.pHead;
-    Node* currentInside;
-
-    if (list.pHead == NULL) 
-        return list; 
+    Node* currentOutside = oList.pHead;
+    Node* currentInside; 
     
     while (currentOutside->pNext != NULL)
     {
@@ -696,9 +707,10 @@ void displaySubMenu() {
     printf("0. Back\n");
 }
 
-void options(List &list,Book book) {
+void options(List &list) {
     int selection;
     int isRunning = 1;
+    Book book;
 
     while (isRunning) {
 
@@ -723,13 +735,11 @@ void options(List &list,Book book) {
 
             case 3: //search book
             	system("cls");
-                printf("Search book\n");
                 searchBook(list);
                 break;
 
             case 4: //display book
             	system("cls");
-                printf("Display book\n");
                 displayBooks(list);
                 break;
 
@@ -744,9 +754,31 @@ void displayMenu() {
     printf("2. Open...\n");
     printf("0. Exit\n");
 }
+
+void writeFile(FILE* fout) {
+	
+}
+
+void readFile(FILE* fin, List list) {
+	Book book;
+	while(1) {
+		fgets(book.isbn, 13, fin);
+		fgets(book.title, 23, fin);
+		fgets(book.author, 23, fin);
+		fgets(book.publishingHouse, 23, fin);
+//		fgets(book.publishingYear, 23, fin);
+//		fgets(book.state, 1, fin);
+		insertLast(list, book);
+//		if(fgets(book.state, 1, fin) == NULL) {
+//			return;
+//		}
+//		fgets(fin, "%13s%23s%23s%23s%23s%15s", &book.isbn, &book.title, &book.author, &book.publishingHouse, &book.publishingYear, &state);
+//		printf("%13s%23s%23s%23s%23s%15s\n", book.isbn, book.title, book.author, book.publishingHouse, book.publishingYear, state);
+	}	
+}
+
 int main() {
 	List list;
-	Book book;
     int selection;
     int isRunning = 1;
     while (isRunning) {
@@ -760,22 +792,42 @@ int main() {
                 break;
             
             case 1://create
-            	system("cls");
-            	createNullList(list);
-                options(list,book);
-                break;
+            	{
+            		system("cls");
+	            	createNullList(list);
+	                options(list);
+	                break;
+				}
 
             case 2://open file
-                //options();
-                system("cls");
-                break;
+                {
+                	system("cls");
+					FILE *fin;
+					createNullList(list);				
+                	fin = fopen("F:/blue0802/LMS-online/Covid-19_2/Do-An-GTLT/DA/DoAnGiaiThuat/db.txt", "r");
+                	if(fin != NULL) {
+                		readFile(fin, list);
+                		fclose(fin);
+					}
+					display(list);
+                	getch();
+                	break;
+				}
 
             default:
                 break;
         }
-		system("cls");
+//		system("cls");
     }
     printf("\nThank for watching!");
     // getch();
     return 0;
 }
+//int c;
+//					FILE *fin;				
+//                	fin = fopen("F:/blue0802/LMS-online/Covid-19_2/Do-An-GTLT/DA/DoAnGiaiThuat/db.txt", "r");
+//					if (fin) {
+//					    while ((c = getc(fin)) != EOF)
+//					        putchar(c);
+//					    fclose(fin);
+//					}

@@ -1,15 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
-
-
 struct book {
-    char isbn[10];
-    char title[20];
+    char isbn[5];
+    char title[40];
     char author[20];
     char publishingHouse[20];
     int  publishingYear;
-    int state;//chỗ này sửa thành kiểu int vì trong c k có kiểu boolen
+    int state;
 };
 typedef struct book Book;
 
@@ -24,7 +22,7 @@ struct list {
     Node *pTail;
 };
 typedef struct list List;
-
+//Khai bao ham chinh
 void display(List &list);
 void displayInsertMenu();
 void displayDeletingMenu();
@@ -46,11 +44,39 @@ List stateBooks(List &list, int state);
 void options(List &list);
 void writeFile(FILE* fout);
 void readFile(FILE* fin);
-
+//Khai bao ham phu
 bool strcmp(char s1[], char s2[]);
 int strlen(char s[]);
-
-
+void strProcessing(char s[]);
+												//Cho nay cua thang Minh
+//Dinh nghia ham phu
+int strlen(char s[])
+{
+	int i = 0, count = 0;
+	while(s[i] != '\0')
+	{
+		i++;
+		count++;
+	}
+	return count;
+}
+bool strcmp(char s1[], char s2[])
+{
+	if(strlen(s1) != strlen(s2)) return false;
+	else{
+		for(int i = 0; i < strlen(s1); i++)
+		{
+			if(s1[i] != s2[i]) return false;
+		}
+	}
+	return true;
+}
+void strProcessing(char s[])
+{
+	for(int i = 0; i < strlen(s); i++)
+		if(s[i] == '_') s[i] = ' ';
+}
+//Dinh nghia ham chinh
 Book createBook() {
     char s;
     Book book;
@@ -92,9 +118,6 @@ void createNullList(List &l)
 	l.pHead = NULL;
 	l.pTail = NULL;
 }
-
-//==================================Chỗ này của thằng Minh=======================================
-//adding feature ===============================================
 void insertFist(List &l,Book book){
     Node *temp = createNode(book);
     if(l.pHead == NULL){
@@ -116,27 +139,7 @@ void insertLast(List &l,Book book){
         l.pTail = temp;
     }
 }
-int strlen(char s[])
-{
-	int i = 0, count = 0;
-	while(s[i] != '\0')
-	{
-		i++;
-		count++;
-	}
-	return count;
-}
-bool strcmp(char s1[], char s2[])
-{
-	if(strlen(s1) != strlen(s2)) return false;
-	else{
-		for(int i = 0; i < strlen(s1); i++)
-		{
-			if(s1[i] != s2[i]) return false;
-		}
-	}
-	return true;
-}
+
 void insertAfter(List &l,Book book)
 {
     char isbn[10];
@@ -152,6 +155,26 @@ void insertAfter(List &l,Book book)
             k->pNext = temp;
         }
     }
+}
+void createListFromFile(List &l)
+{
+	FILE *file;
+	Book book;
+	l.pHead = NULL;
+	l.pTail = NULL;
+	char s;
+	file = fopen("thuvien.txt","r");
+	if(file == NULL){
+		perror("Error");
+		exit(1);
+	}
+	while(!feof(file)){
+		fscanf(file,"%s %s %s %s %d %d",&book.isbn,&book.title,&book.author,&book.publishingHouse,&book.publishingYear,&book.state);
+		strProcessing(book.title);
+		strProcessing(book.author);
+		strProcessing(book.publishingHouse);
+		insertLast(l,book);
+	}
 }
 void removeFirst(List &l){
 	if(l.pHead == NULL) return;
@@ -376,7 +399,7 @@ void deleteBook(List &list) {
     }
 }
 
-//==================================Chỗ này của thằng Bảo=======================================
+													//cho nay cua thang bao
 //searching feature============================================
 void displaySearchingMenu() {
     printf("1. Search all books of the list by book's title\n");
@@ -606,7 +629,7 @@ void displayBooks(List &list) {
                 break;
             
             case 1: //Display all books by category
-				display(list);//tạm thời hiển thị tất cả, update sau
+				display(list);//t?m th?i hi?n th? t?t c?, update sau
                 break;
 
             case 2: //Display state of the book
@@ -697,7 +720,7 @@ void displayBooks(List &list) {
     }
 }
 
-//==================================Chỗ này hỏi nhau trước khi sửa=======================================
+//==================================Cho nay hoi nhau truoc khi sua=======================================
 //main ===========================================
 void displaySubMenu() {
     printf("1. Add a new Book\n");
@@ -756,25 +779,7 @@ void displayMenu() {
 }
 
 void writeFile(FILE* fout) {
-	
-}
 
-void readFile(FILE* fin, List list) {
-	Book book;
-	while(1) {
-		fgets(book.isbn, 13, fin);
-		fgets(book.title, 23, fin);
-		fgets(book.author, 23, fin);
-		fgets(book.publishingHouse, 23, fin);
-//		fgets(book.publishingYear, 23, fin);
-//		fgets(book.state, 1, fin);
-		insertLast(list, book);
-//		if(fgets(book.state, 1, fin) == NULL) {
-//			return;
-//		}
-//		fgets(fin, "%13s%23s%23s%23s%23s%15s", &book.isbn, &book.title, &book.author, &book.publishingHouse, &book.publishingYear, &state);
-//		printf("%13s%23s%23s%23s%23s%15s\n", book.isbn, book.title, book.author, book.publishingHouse, book.publishingYear, state);
-	}	
 }
 
 int main() {
@@ -800,34 +805,18 @@ int main() {
 				}
 
             case 2://open file
-                {
-                	system("cls");
-					FILE *fin;
-					createNullList(list);				
-                	fin = fopen("F:/blue0802/LMS-online/Covid-19_2/Do-An-GTLT/DA/DoAnGiaiThuat/db.txt", "r");
-                	if(fin != NULL) {
-                		readFile(fin, list);
-                		fclose(fin);
-					}
+            	{
+                	createListFromFile(list);
 					display(list);
-                	getch();
                 	break;
 				}
 
             default:
                 break;
         }
-//		system("cls");
     }
     printf("\nThank for watching!");
     // getch();
     return 0;
 }
-//int c;
-//					FILE *fin;				
-//                	fin = fopen("F:/blue0802/LMS-online/Covid-19_2/Do-An-GTLT/DA/DoAnGiaiThuat/db.txt", "r");
-//					if (fin) {
-//					    while ((c = getc(fin)) != EOF)
-//					        putchar(c);
-//					    fclose(fin);
-//					}
+

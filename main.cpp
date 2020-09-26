@@ -3,7 +3,7 @@
 #include <conio.h>
 struct book {
     char isbn[5];
-    char title[40];
+    char title[30];
     char author[20];
     char publishingHouse[20];
     int  publishingYear;
@@ -142,7 +142,7 @@ void insertLast(List &l,Book book){
 
 void insertAfter(List &l,Book book)
 {
-    char isbn[10];
+    char isbn[5];
     Node *temp = createNode(book);
     printf("\nYou need insert it after book's isbn: ");
     scanf("%s",&isbn);
@@ -204,7 +204,7 @@ void removeLast(List &l)
 }
 void removeAfter(List &l)
 {
-	char isbn[10];
+	char isbn[5];
     printf("\nYou need remove book after book's isbn: ");
     scanf("%s",&isbn);
     fflush(stdin);
@@ -222,7 +222,7 @@ void removeAfter(List &l)
 }
 void removeBookByIsbn(List &l)
 {
-	char isbn[10];
+	char isbn[5];
     printf("\nPlease enter the book's isbn need to remove: ");
     scanf("%s",&isbn);
     fflush(stdin);
@@ -243,7 +243,7 @@ void removeBookByIsbn(List &l)
 }
 void removeBookByTitle(List &l)
 {
-	char title[20];
+	char title[30];
     printf("\nPlease enter the book's title need to remove: ");
     fflush(stdin);
     gets(title);
@@ -405,7 +405,7 @@ void displaySearchingMenu() {
     printf("1. Search all books of the list by book's title\n");
     printf("2. Search all books of the list by author\n");
     printf("3. Search all books of the list by publisher's name\n");
-    printf("0. Exit\n");
+    printf("0. Back\n");
 }
 
 
@@ -506,15 +506,15 @@ void displayBooksMenu() {
     printf("1. Display all books by category\n");
     printf("2. Display state of the book\n");
     printf("3. Display all books in order\n");
-    printf("0. Exit\n");
+    printf("0. Back\n");
 }
 
 void print(Book &book) {
-	printf("%13s", book.isbn);
-	printf("%23s", book.title);
-	printf("%23s", book.author);
-	printf("%23s", book.publishingHouse);
-	printf("%23d", book.publishingYear);
+	printf("%10s", book.isbn);
+	printf("%30s", book.title);
+	printf("%20s", book.author);
+	printf("%20s", book.publishingHouse);
+	printf("%20d", book.publishingYear);
 	if(book.state == 1) {
 		printf("      Completed\n");
 	} else {
@@ -524,14 +524,18 @@ void print(Book &book) {
 
 void display(List &list) {
 	Node* current = list.pHead;
-	char heading[200] = "         ISBN                  Title                 Author       Publishing House        Publishing Year          State \n";
+	char heading[200] = "      ISBN                         Title              Author    Publishing House     Publishing Year          State \n";
 	printf("%s", heading);
 	printf("========================================================================================================================\n");
 	while(current != NULL) {
 		print(current->book);
+//		printf("------------------------------------------------------------------------------------------------------------------------\n");
 		current = current->pNext;
 	};
-	printf("------------------------------------------------------------------------------------------------------------------------\n");
+	printf("========================================================================================================================\n");
+	printf("Press something to back!");
+	getch();
+	system("cls");
 }
 
 List stateBooks(List &list, int state) {
@@ -806,8 +810,9 @@ int main() {
 
             case 2://open file
             	{
+            		system("cls");
                 	createListFromFile(list);
-					display(list);
+					options(list);
                 	break;
 				}
 

@@ -506,6 +506,7 @@ void displayBooksMenu() {
     printf("1. Display all books by category\n");
     printf("2. Display state of the book\n");
     printf("3. Display all books in order\n");
+    printf("4. Display author's book number\n");
     printf("0. Back\n");
 }
 
@@ -617,6 +618,23 @@ List sortList(List &list, char keyword[]) {
     return oList;
 }
 
+void pushAuthor(char authors[50][20], char author[]) {
+	for(int i=0; authors[i] != "" || authors[0] == ""; i++) {
+		for(int j=0; strlen(author); j++) {
+			authors[i][j] = author[j];
+		}
+	}
+}
+
+int hasAuthor(char authors[50][20], char author[]) {
+	for(int i=0; authors[i] != ""; i++) {
+		if(strcmp(authors[i], author)) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
 void displayBooks(List &list) {
     int selection;
     int isRunning = 1;
@@ -717,6 +735,44 @@ void displayBooks(List &list) {
                     }
                     break;
                 }
+            case 4: 
+			{
+//            	int counts[50] = {0};
+//            	char authors[50][20] = {""};
+//            	int numberAuthor = 0;
+//            	Node* current = list.pHead;
+//				while(current != NULL) {
+//					if (!hasAuthor(authors, current->book.author)) {
+//						pushAuthor(authors, current->book.author);
+//						numberAuthor++;
+//					}
+//					current = current->pNext;
+//				};
+//				
+//				for(int i=0; i<numberAuthor; i++) {
+//					while(current != NULL) {
+//						if(strcmp(authors[i], current->book.author)) {
+//							counts[i]++;
+//						}
+//						current = current->pNext;
+//					};
+//				}
+//				
+//				//phan hien thi
+//				char heading[200] = "              Author    Amount of book\n";
+//				printf("%s", heading);
+//				printf("========================================================================================================================\n");
+//				for(int i=0; counts[i] > 0; i++) {
+//					printf("%d\n", counts[i]);
+//				}
+//				printf("========================================================================================================================\n");
+//				printf("Press something to back!");
+//				getch();
+//				system("cls");
+//            	//loc tac gia -> authors[]
+//            	//loc ra tog so sach cua 1 tac gia -> counts[] co index tuong ung voi authors[]
+				break;
+			}
                 
             default:
                 break;
@@ -730,7 +786,7 @@ void displaySubMenu() {
     printf("1. Add a new Book\n");
     printf("2. Delete book\n");
     printf("3. Search book\n");
-    printf("4. Library\n");
+    printf("4. Display book\n");
     printf("0. Back\n");
 }
 

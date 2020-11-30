@@ -22,6 +22,19 @@ struct list {
     Node *pTail;
 };
 typedef struct list List;
+
+struct author {
+	char author[20];
+	int bookAmount;
+};
+typedef struct author Author;
+
+struct nodeAuthor {
+	Author author;
+	nodeAuthor *pNext;
+};
+typedef struct nodeAuthor NodeAuthor;
+
 //Khai bao ham chinh
 void display(List &list);
 void displayInsertMenu();
@@ -48,6 +61,7 @@ void readFile(FILE* fin);
 bool strcmp(char s1[], char s2[]);
 int strlen(char s[]);
 void strProcessing(char s[]);
+void copyList(List &oList, List &list);
 												//Cho nay cua thang Minh
 //Dinh nghia ham phu
 int strlen(char s[])
@@ -107,12 +121,29 @@ Book createBook() {
 	return book;
 }
 
+Author createAuthor(char authorName[], int bookAmount) {
+	Author temp;
+	for(int i=0; i < 20; i++) {
+		temp.author[i] = authorName[i];
+	}
+	temp.bookAmount = bookAmount;
+	return temp;
+}
+
 Node *createNode(Book book){
     Node *temp = (Node*)malloc(sizeof(Node));
     temp->book = book;
     temp->pNext = NULL;
     return temp;
 }
+
+NodeAuthor *createNode(Author author){
+    NodeAuthor *temp = (NodeAuthor*)malloc(sizeof(NodeAuthor));
+    temp->author = author;
+    temp->pNext = NULL;
+    return temp;
+}
+
 void createNullList(List &l)
 {
 	l.pHead = NULL;
@@ -137,6 +168,20 @@ void insertLast(List &l,Book book){
     else{
         l.pTail->pNext = temp;
         l.pTail = temp;
+    }
+}
+
+void push(NodeAuthor *&head, Author author){
+    if(head == NULL)
+    {
+        head = createNode(author);
+    }
+    else{
+    	NodeAuthor *current = head;
+        while(current->pNext != NULL) {
+        	current = current->pNext;
+		}
+		current->pNext = createNode(author);
     }
 }
 
@@ -539,6 +584,23 @@ void display(List &list) {
 	system("cls");
 }
 
+void display(NodeAuthor* head) {
+	char heading[200] = "              Author      Amount of book\n";
+	printf("%s", heading);
+	printf(" =======================================\n");
+
+	NodeAuthor *current = head;
+	while(current != NULL) {
+		printf("%20s", current->author.author);
+		printf("%20d\n", current->author.bookAmount);
+		current = current->pNext;
+	}
+	printf(" =======================================\n");
+	printf("Press something to back!");
+	getch();
+	system("cls");
+}
+
 List stateBooks(List &list, int state) {
     List oList;
     Node* current = list.pHead;
@@ -618,23 +680,6 @@ List sortList(List &list, char keyword[]) {
     return oList;
 }
 
-void pushAuthor(char authors[50][20], char author[]) {
-	for(int i=0; authors[i] != "" || authors[0] == ""; i++) {
-		for(int j=0; strlen(author); j++) {
-			authors[i][j] = author[j];
-		}
-	}
-}
-
-int hasAuthor(char authors[50][20], char author[]) {
-	for(int i=0; authors[i] != ""; i++) {
-		if(strcmp(authors[i], author)) {
-			return 1;
-		}
-	}
-	return 0;
-}
-
 void displayBooks(List &list) {
     int selection;
     int isRunning = 1;
@@ -651,7 +696,7 @@ void displayBooks(List &list) {
                 break;
             
             case 1: //Display all books by category
-				display(list);//t?m th?i hi?n th? t?t c?, update sau
+				display(list);
                 break;
 
             case 2: //Display state of the book
@@ -737,40 +782,30 @@ void displayBooks(List &list) {
                 }
             case 4: 
 			{
-//            	int counts[50] = {0};
-//            	char authors[50][20] = {""};
-//            	int numberAuthor = 0;
-//            	Node* current = list.pHead;
-//				while(current != NULL) {
-//					if (!hasAuthor(authors, current->book.author)) {
-//						pushAuthor(authors, current->book.author);
-//						numberAuthor++;
-//					}
-//					current = current->pNext;
-//				};
-//				
-//				for(int i=0; i<numberAuthor; i++) {
-//					while(current != NULL) {
-//						if(strcmp(authors[i], current->book.author)) {
-//							counts[i]++;
-//						}
-//						current = current->pNext;
-//					};
-//				}
-//				
-//				//phan hien thi
-//				char heading[200] = "              Author    Amount of book\n";
-//				printf("%s", heading);
-//				printf("========================================================================================================================\n");
-//				for(int i=0; counts[i] > 0; i++) {
-//					printf("%d\n", counts[i]);
-//				}
-//				printf("========================================================================================================================\n");
-//				printf("Press something to back!");
-//				getch();
-//				system("cls");
-//            	//loc tac gia -> authors[]
-//            	//loc ra tog so sach cua 1 tac gia -> counts[] co index tuong ung voi authors[]
+
+				List oList;
+                createNullList(oList);
+                oList = sortList(list, "author");
+                NodeAuthor* listAuthor;
+                listAuthor = NULL;
+            	Node* current = oList.pHead;
+            	if(current != NULL) {
+            		push(listAuthor, createAuthor(current->book.author, 1));
+				}
+ 				NodeAuthor *oCurrent = listAuthor; 
+				while(current->pNext != NULL) {
+					if (!strcmp(current->book.author, current->pNext->book.author)) {
+						push(listAuthor, createAuthor(current->pNext->book.author, 1));
+						if(oCurrent->pNext != NULL) {
+							oCurrent = oCurrent->pNext;
+						}
+					} else {
+						oCurrent->author.bookAmount += 1;
+					}
+					current = current->pNext;
+				};	
+				display(listAuthor);
+
 				break;
 			}
                 

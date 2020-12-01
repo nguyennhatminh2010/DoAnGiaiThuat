@@ -1,7 +1,1 @@
-VH01	Tat_Den			Ngo_Tat_To	Kim_Dong	1975	0
-KN01	Lam_Giau_Khong_Kho	Huan_Rose	FaCanSa		2020	1
-KN02	Nha_Gia_Kim		Paulo_Coelho	Kim_Dong	2000	1
-TH01	Lap_Trinh_C		Pham_Van_At	NXB_Giao_Duc	1998	0
-TH02	JavaScript_StepByStep	David_Cromatic	Kim_Dong	1993	1
-VH02	Tho_Tinh		Xuan_Dieu	Fahasa		1945	0
-VH03	Vo_Nhat			Kim_Lan		Kim_Dong	1945	1
+VH01 Tat_Den Ngo_Tat_To Kim_Dong 1975 0 KN01 Lam_Giau_Khong_Kho Huan_Rose FaCanSa 2020 1 KN02 Nha_Gia_Kim Paulo_Coelho Kim_Dong 2000 1 TH01 Lap_Trinh_C Pham_Van_At NXB_Giao_Duc 1998 0 TH02 JavaScript_StepByStep David_Cromatic Kim_Dong 1993 1 VH02 Tho_Tinh Xuan_Dieu Fahasa 1945 0 VH05 Tieng_Viet_12 Bo_Giao_Duc BGD&DT 2000 0 

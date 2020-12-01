@@ -90,6 +90,18 @@ void strProcessing(char s[])
 	for(int i = 0; i < strlen(s); i++)
 		if(s[i] == '_') s[i] = ' ';
 }
+void strProcessingReverse(char s[])
+{
+	for(int i = 0; i < strlen(s); i++)
+		if(s[i] == ' ') s[i] = '_';
+}
+char messageConfirm(char task[20],char selection)
+{
+	printf("Do you want to %s?(Y/N)\n",task);
+	printf("\n->");
+	scanf("%s",&selection);
+	return selection;
+}
 //Dinh nghia ham chinh
 Book createBook() {
     char s;
@@ -149,7 +161,19 @@ void createNullList(List &l)
 	l.pHead = NULL;
 	l.pTail = NULL;
 }
-void insertFist(List &l,Book book){
+
+int hasBook(List &l, Book book) {
+	Node* current = l.pHead;
+	while(current != NULL) {
+		if(strcmp(current->book.isbn, book.isbn)) {
+			return 1;
+		}
+		current = current->pNext;
+	};
+	return 0;
+}
+
+void insertFist(List &l, Book book){
     Node *temp = createNode(book);
     if(l.pHead == NULL){
         l.pHead = l.pTail = temp;
@@ -201,26 +225,6 @@ void insertAfter(List &l,Book book)
         }
     }
 }
-void createListFromFile(List &l)
-{
-	FILE *file;
-	Book book;
-	l.pHead = NULL;
-	l.pTail = NULL;
-	char s;
-	file = fopen("thuvien.txt","r");
-	if(file == NULL){
-		perror("Error");
-		exit(1);
-	}
-	while(!feof(file)){
-		fscanf(file,"%s %s %s %s %d %d",&book.isbn,&book.title,&book.author,&book.publishingHouse,&book.publishingYear,&book.state);
-		strProcessing(book.title);
-		strProcessing(book.author);
-		strProcessing(book.publishingHouse);
-		insertLast(l,book);
-	}
-}
 void removeFirst(List &l){
 	if(l.pHead == NULL) return;
 	Node *temp = l.pHead;
@@ -246,6 +250,56 @@ void removeLast(List &l)
 			return;
 		}
 	}
+}
+void createListFromFile(List &l,char filename[50])
+{
+	FILE *file;
+	Book book;
+	l.pHead = NULL;
+	l.pTail = NULL;
+	char s;
+	file = fopen(filename,"r");
+	if(file == NULL){
+		perror("Error");
+		exit(1);
+	}
+	while(!feof(file)){
+		fscanf(file,"%s %s %s %s %d %d",&book.isbn,&book.title,&book.author,&book.publishingHouse,&book.publishingYear,&book.state);
+		strProcessing(book.title);
+		strProcessing(book.author);
+		strProcessing(book.publishingHouse);
+		insertLast(l,book);
+	}
+	removeLast(l);
+	fclose(file); 
+}
+void writeListIntoFile(List &l,char filename[50])
+{
+	FILE *file;
+	int enterKey = 13;
+	file = fopen(filename,"w");
+	if(file == NULL){
+		perror("Error");
+		exit(1);
+	}
+		
+	 for(Node *k = l.pHead; k != NULL; k = k->pNext)
+    {
+    	strProcessingReverse(k->book.title);
+		strProcessingReverse(k->book.author);
+		strProcessingReverse(k->book.publishingHouse);
+        fprintf(file,"%s %s %s %s %d %d ",k->book.isbn,k->book.title,k->book.author,k->book.publishingHouse,k->book.publishingYear,k->book.state);
+        fputc(enterKey, file);
+    }
+	fclose(file); 
+}
+void messageSave(List &list,char filename[50])
+{
+	char selection;
+	printf("Do you want to save into the file(Y/N)?\n");
+    printf("\n-> ");
+    scanf("%s", &selection);
+    if(selection == 'Y' || selection == 'y') writeListIntoFile(list,filename);
 }
 void removeAfter(List &l)
 {
@@ -341,10 +395,11 @@ void displayInsertMenu() {
 
 void insertBook(List &list,Book book) {
     int selection;
+	char selection2,select;
     int isRunning = 1;
 
     while (isRunning) {
-
+		
         displayInsertMenu();
         printf("\n-> ");
         scanf("%d", &selection);
@@ -357,19 +412,64 @@ void insertBook(List &list,Book book) {
             case 1: //Insert a new book at the top of the list
                 printf("Insert a new book at the top of the list\n");
                 book = createBook();
-                insertFist(list,book);
+                select = messageConfirm("add it",select);
+                if(select == 'Y' || select == 'y')
+				{
+					if(hasBook(list, book)) {
+						printf("The book has exist!\n");
+						printf("Press something to back!");
+						getch();
+						system("cls");	
+					} else {
+						insertFist(list,book);
+						printf("Completed!\n");
+						printf("Press something to back!");
+						getch();
+						system("cls");
+					}
+				}
 				break;
 
             case 2: //Insert a new book at after the orther
                 printf("Insert a book at after the orther\n");
                 book = createBook();
-                insertAfter(list,book);
+                select = messageConfirm("add it",select);
+                if(select == 'Y' || select == 'y')
+				{
+					if(hasBook(list, book)) {
+						printf("The book has exist!\n");
+						printf("Press something to back!");
+						getch();
+						system("cls");	
+					} else {
+						insertAfter(list,book);
+						printf("Completed!\n");
+						printf("Press something to back!");
+						getch();
+						system("cls");
+					}
+				}
                 break;
 
             case 3: //Insert a new book at the end of the list
                 printf("Insert a new book at the end of the list\n");
                 book = createBook();
-                insertLast(list,book);
+                select = messageConfirm("add it",select);
+                if(select == 'Y' || select == 'y')
+				{
+					if(hasBook(list, book)) {
+						printf("The book has exist!\n");
+						printf("Press something to back!");
+						getch();
+						system("cls");	
+					} else {
+						insertLast(list,book);
+						printf("Completed!\n");
+						printf("Press something to back!");
+						getch();
+						system("cls");
+					}
+				}
                 break;
 
             default:
@@ -393,6 +493,7 @@ void displayDeletingMenu() {
 
 void deleteBook(List &list) {
     int selection;
+    char select;
     int isRunning = 1;
 
     while (isRunning) {
@@ -408,33 +509,55 @@ void deleteBook(List &list) {
             
             case 1: //Delete a book by id
                 printf("Delete a book by id\n");
-                removeBookByIsbn(list);
+                select = messageConfirm("delete it",select);
+                if(select == 'Y' || select == 'y')
+				{
+					removeBookByIsbn(list);
+				}
                 break;
 
             case 2: //Delete a book by title
                 printf("Delete a book by book's title\n");
-                removeBookByTitle(list);
+                select = messageConfirm("delete it",select);
+                if(select == 'Y' || select == 'y')
+				{
+					removeBookByTitle(list);
+				}
                 break;
             case 3: //Delete all book by author
                 printf("Delete all book by author\n");
-                removeBookByAuthor(list);
+                select = messageConfirm("delete it",select);
+                if(select == 'Y' || select == 'y')
+				{
+					removeBookByAuthor(list);
+				}
                 break;
 
             case 4: //Delete a book at the top of the list
                 printf("Delete a book at the top of the list\n");
-                removeFirst(list);
-                system("pause");
+                select = messageConfirm("delete it",select);
+                if(select == 'Y' || select == 'y')
+				{
+					removeFirst(list);
+				}
                 break;
 
             case 5: //Delete a book after the orther by book's isbn
                 printf("Delete a book after the orther by book's isbn\n");
-                removeAfter(list);
+                select = messageConfirm("delete it",select);
+                if(select == 'Y' || select == 'y')
+				{
+					removeAfter(list);
+				}
                 break;
 
             case 6: //Delete a book at the end of the list
                 printf("Delete a book at the end of the list\n");
-                removeLast(list);
-                system("pause");
+                select = messageConfirm("delete it",select);
+                if(select == 'Y' || select == 'y')
+				{
+					removeLast(list);
+				}
                 break;
 
             default:
@@ -825,19 +948,19 @@ void displaySubMenu() {
     printf("0. Back\n");
 }
 
-void options(List &list) {
+void options(List &list,char filename[50]) {
     int selection;
     int isRunning = 1;
     Book book;
 
     while (isRunning) {
-
         displaySubMenu();
         printf("\n-> ");
         scanf("%d", &selection);
         switch (selection) {
 
             case 0: //back
+            	messageSave(list,filename);
                 isRunning = 0;
                 break;
             
@@ -895,15 +1018,15 @@ int main() {
             	{
             		system("cls");
 	            	createNullList(list);
-	                options(list);
+	                options(list,"thuvien2.txt");
 	                break;
 				}
 
             case 2://open file
             	{
             		system("cls");
-                	createListFromFile(list);
-					options(list);
+                	createListFromFile(list,"thuvien.txt");
+					options(list,"thuvien.txt");
                 	break;
 				}
 
